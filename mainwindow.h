@@ -17,10 +17,10 @@ QT_END_NAMESPACE
 
 enum class DrawTools
 {
-    drawTool,
-    Line,
-    Ellipse,
-    Rectangle
+    DRAW_TOOL,
+    LINE,
+    ELLIPSE,
+    RECTANGLE
 };
 
 class MainWindow : public QMainWindow
@@ -42,7 +42,7 @@ private:
 
     void mouseMoveEvent(QMouseEvent* event);
     void mousePressEvent(QMouseEvent* event);
-    void mouseUnpressEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent* event);
     void paintEvent(QPaintEvent* event);
     void createFileMenuBar();
 private slots:

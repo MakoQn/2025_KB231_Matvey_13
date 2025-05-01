@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>source/images/colorIMG.jpg</file>
+        <file>source/images/drawToolIMG.jpg</file>
+        <file>source/images/ellipseIMG.jpg</file>
+        <file>source/images/lineIMG.jpg</file>
+        <file>source/images/rectangleIMG.jpg</file>
+    </qresource>
+</RCC>

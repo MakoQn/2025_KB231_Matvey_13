@@ -3,7 +3,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow),
-    sheet(1600, 900), chosenTool(DrawTools::drawTool),
+    sheet(1600, 900), chosenTool(DrawTools::DRAW_TOOL),
     chosenColor(Qt::black), thickness(1),
     isClicked(false), isChanged(false)
 {
@@ -12,11 +12,20 @@ MainWindow::MainWindow(QWidget *parent) :
     createFileMenuBar();
     connect(ui->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::setThickness);
     sheet.fill(Qt::white);
+
+    connect(ui->DrawTool, &QPushButton::clicked, this, &MainWindow::setDrawTool);
+    connect(ui->Line, &QPushButton::clicked, this, &MainWindow::setLine);
+    connect(ui->Ellipse, &QPushButton::clicked, this, &MainWindow::setEllipse);
+    connect(ui->Rectangle, &QPushButton::clicked, this, &MainWindow::setRectangle);
+    connect(ui->Color, &QPushButton::clicked, this, &MainWindow::setColor);
+
+    this->setWindowTitle("Рисовашкес");
+    this->resize(1600, 900);
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent* event)
 {
-    if (isClicked && chosenTool == DrawTools::drawTool)
+    if (isClicked && chosenTool == DrawTools::DRAW_TOOL)
     {
         QPainter painter(&sheet);
         painter.setPen(QPen(chosenColor, thickness));
@@ -39,34 +48,36 @@ void MainWindow::mousePressEvent(QMouseEvent* event)
     currentPosition = lastPosition;
 }
 
-void MainWindow::mouseUnpressEvent(QMouseEvent* event)
+void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 {
     isClicked = false;
 
-    if (chosenTool != DrawTools::drawTool)
+    if (chosenTool != DrawTools::DRAW_TOOL)
     {
         QPainter painter(&sheet);
         painter.setPen(QPen(chosenColor, thickness));
 
         switch ((int)chosenTool)
         {
-        case (int)DrawTools::Line:
+        case (int)DrawTools::LINE:
         {
             painter.drawLine(lastPosition, event->pos());
-        }
             break;
-        case (int)DrawTools::Ellipse:
+        }
+        case (int)DrawTools::ELLIPSE:
         {
             painter.drawEllipse(QRect(lastPosition, event->pos()));
-        }
             break;
-        case (int)DrawTools::Rectangle:
+        }
+        case (int)DrawTools::RECTANGLE:
         {
             painter.drawRect(QRect(lastPosition, event->pos()));
+            break;
         }
-            break;
         default:
+        {
             break;
+        }
         }
 
         isChanged = true;
@@ -79,29 +90,31 @@ void MainWindow::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.drawPixmap(0, 0, sheet);
 
-    if (isClicked && chosenTool != DrawTools::drawTool)
+    if (isClicked && chosenTool != DrawTools::DRAW_TOOL)
     {
         painter.setPen(QPen(chosenColor, thickness, Qt::DashLine));
 
         switch ((int)chosenTool)
         {
-        case (int)DrawTools::Line:
+        case (int)DrawTools::LINE:
         {
             painter.drawLine(lastPosition, currentPosition);
-        }
             break;
-        case (int)DrawTools::Ellipse:
+        }
+        case (int)DrawTools::ELLIPSE:
         {
             painter.drawEllipse(QRect(lastPosition, currentPosition));
-        }
             break;
-        case (int)DrawTools::Rectangle:
+        }
+        case (int)DrawTools::RECTANGLE:
         {
             painter.drawRect(QRect(lastPosition, currentPosition));
+            break;
         }
-            break;
         default:
+        {
             break;
+        }
         }
     }
 }
@@ -112,8 +125,10 @@ void MainWindow::createFileMenuBar()
 
     QAction* createFileAction = fileMenu->addAction("Создать файл");
     connect(createFileAction, &QAction::triggered, this, &MainWindow::createFile);
+
     QAction* openFile = fileMenu->addAction("Открыть файл");
     connect(openFile, &QAction::triggered, this, &MainWindow::openFile);
+
     QAction* saveFile = fileMenu->addAction("Сохранить файл");
     connect(saveFile, &QAction::triggered, this, &MainWindow::saveFile);
 }
@@ -183,22 +198,22 @@ void MainWindow::saveFile()
 
 void MainWindow::setDrawTool()
 {
-    chosenTool = DrawTools::drawTool;
+    chosenTool = DrawTools::DRAW_TOOL;
 }
 
 void MainWindow::setLine()
 {
-    chosenTool = DrawTools::Line;
+    chosenTool = DrawTools::LINE;
 }
 
 void MainWindow::setEllipse()
 {
-    chosenTool = DrawTools::Ellipse;
+    chosenTool = DrawTools::ELLIPSE;
 }
 
 void MainWindow::setRectangle()
 {
-    chosenTool = DrawTools::Rectangle;
+    chosenTool = DrawTools::RECTANGLE;
 }
 
 void MainWindow::setColor()
